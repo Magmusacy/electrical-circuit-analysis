@@ -51,3 +51,6 @@ An implementation of numerical methods and circuit analysis algorithms featuring
 
 ### Small-World Network
 ![Small-World](images/smallworld.png)
+
+#### Additional notes
+I've added an ability to display/hide edge labels as well as nodes to improve readability of large graphs, all of this functionality is configurable through jupyter notebook file
