@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1920px;
+                 height: 1200px;
+                 background-color: #4C585B;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#fff", "font": {"color": "#000"}, "id": 0, "label": "0", "physics": false, "shape": "dot", "x": 300.0, "y": 15.67316777341898}, {"color": "#fff", "font": {"color": "#000"}, "id": 1, "label": "1", "physics": false, "shape": "dot", "x": 163.57334292151506, "y": 251.97104800077295}, {"color": "#fff", "font": {"color": "#000"}, "id": 5, "label": "5", "physics": false, "shape": "dot", "x": 70.9396817977438, "y": -122.87112184141313}, {"color": "#fff", "font": {"color": "#000"}, "id": 2, "label": "2", "physics": false, "shape": "dot", "x": -70.93968129375139, "y": 122.87112026638647}, {"color": "#fff", "font": {"color": "#000"}, "id": 3, "label": "3", "physics": false, "shape": "dot", "x": -299.99999998904366, "y": -15.673166913148714}, {"color": "#fff", "font": {"color": "#000"}, "id": 4, "label": "4", "physics": false, "shape": "dot", "x": -163.57334343646386, "y": -251.97104728601653}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": "#7e03a8", "from": 0, "label": "5 \u03a9 0.33 A", "physics": false, "smooth": {"type": "straight"}, "to": 1}, {"arrows": "to", "color": "#7e03a8", "from": 1, "label": "10 \u03a9 0.33 A", "physics": false, "smooth": {"type": "straight"}, "to": 2}, {"arrows": "to", "color": "#7d03a8", "from": 5, "label": "30 \u03a9 0.33 A", "physics": false, "smooth": {"type": "straight"}, "to": 0}, {"arrows": "to", "color": "#0d0887", "from": 5, "label": "25 \u03a9 0.25 A", "physics": false, "smooth": {"type": "straight"}, "to": 4}, {"arrows": "to", "color": "#f0f921", "from": 2, "label": "SEM 0.58 A", "physics": false, "smooth": {"type": "straight"}, "to": 5}, {"arrows": "to", "color": "#0d0887", "from": 3, "label": "15 \u03a9 0.25 A", "physics": false, "smooth": {"type": "straight"}, "to": 2}, {"arrows": "to", "color": "#0d0887", "from": 4, "label": "20 \u03a9 0.25 A", "physics": false, "smooth": {"type": "straight"}, "to": 3}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"nodes": {"borderWidth": 2, "borderWidthSelected": 4, "font": {"align": "center", "vadjust": -37}, "size": 20}, "edges": {"color": {"inherit": false}, "selectionWidth": 3}, "interaction": {"hover": true, "tooltipDelay": 200}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
